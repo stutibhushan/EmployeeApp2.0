@@ -110,10 +110,11 @@ items: [{
     		Ext.Msg.confirm('Confirm','Do you wanna save your changes',function(btnText){
     	        if(btnText === "no"){
     	        	Ext.getCmp('addEmployeeForm').getForm().reset();
+    	        	Ext.getCmp("addDepartmentForm").getForm().reset();
     	        	//Ext.getCmp('employeeType').reset();
     	        	Ext.getCmp('addEmployeeFormParentPanel').hide();
     	       	    Ext.getCmp('displayViewGridPanel').show();
-    	       	    Ext.getCmp('display-view').getStore.reload();
+    	       	    Ext.getCmp('display-view').getStore().load();
     	        }
     	        else if(btnText === "yes"){
     	            Ext.Msg.alert("Alert", "You have confirmed 'Yes'.");
@@ -125,6 +126,7 @@ items: [{
     		Ext.getCmp('addEmployeeForm').getForm().reset();
         	Ext.getCmp('addEmployeeFormParentPanel').hide();
         	Ext.getCmp('displayViewGridPanel').show();
+        	Ext.getCmp('display-view').getStore().load();
     	}
     	
     	

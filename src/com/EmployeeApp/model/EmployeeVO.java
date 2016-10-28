@@ -12,9 +12,12 @@ public class EmployeeVO {
 	Date startDate, endDate;
 	//List<String> departmentList=new ArrayList<>();
 	String type;
+	double profileCompleteness;
 	
 	
 	
+
+
 	public EmployeeVO() {
 		super();
 	}
@@ -36,6 +39,15 @@ public class EmployeeVO {
 		this.endDate = endDate;
 		//this.departmentList = departmentList;
 		this.type = type;
+	}
+	public double getProfileCompleteness() {
+		return profileCompleteness;
+	}
+
+
+
+	public void setProfileCompleteness(double profileCompleteness) {
+		this.profileCompleteness = profileCompleteness;
 	}
 
 

@@ -3,7 +3,7 @@ Ext.define('EmployeeApp.view.EmployeeGrid', {
     alias: 'widget.displayViewGrid',
 	id: 'display-view',
 	store: 'EmployeeDetailStore',
-	
+	multiSelect: true,
 	
 	
     //title: 'Active Promotions',
@@ -18,7 +18,7 @@ Ext.define('EmployeeApp.view.EmployeeGrid', {
         text:'EMPLOYEE_ID',
         dataIndex: 'id',
         flex: 1,
-        
+        hidden: true,
         sortable: false
     },
     {
@@ -52,6 +52,12 @@ Ext.define('EmployeeApp.view.EmployeeGrid', {
         },
         sortable: false
     }*/,
+    {
+        text: "DESCRIPTION",
+        dataIndex: 'description',
+        width: 50,
+        sortable: false
+    },
     {
        
         text: "SALARY",
@@ -104,6 +110,31 @@ Ext.define('EmployeeApp.view.EmployeeGrid', {
         dataIndex: 'endDate',
         sortable: false
     },
+
+    {
+        
+        text: "PROFILE COMPLETENESS %",
+        dataIndex: 'profileCompleteness',
+        width: 100,
+        sortable: false
+    },
+    
+    {
+        xtype: 'actioncolumn',
+        text: 'DELETE EMPLOYEE',
+        width: 30,
+        sortable: false,
+        menuDisabled: true,
+        items: [{
+            icon: 'ext/resources/images/delete.png',
+            tooltip: 'DELETE EMPLOYEE',
+            scope: this,
+            handler: function(grid, rowIndex){
+            	EmployeeApp.app.getController('EmployeeController').deleteEmployee(grid, rowIndex);
+            }
+        }]
+    }
+    
     
  ],
     

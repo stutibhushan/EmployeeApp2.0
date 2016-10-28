@@ -35,6 +35,7 @@ public class UpdateEmployee extends HttpServlet {
    private String state;
    private String country;
    private String d;
+   private int type=-1;
    private SimpleDateFormat formatter=new SimpleDateFormat("yyyy-MM-dd");
    int status=0;
 	
@@ -65,19 +66,27 @@ public class UpdateEmployee extends HttpServlet {
 	        	 
 	         }
 	         System.out.println(aList.toString());
-	         
+	         System.out.println("565");
 	 		 
-	          
-	       
+	         if(request.getParameter("type")!="" || request.getParameter("type")!=null)
+		        {
+	        	 System.out.println("345");
+		        	type=Integer.parseInt(request.getParameter("type"));
+		        }
+	         System.out.println("4");
 	        Employee employee=new Employee(name,description,address,city,state,country,salary, startDate, endDate);
-
+	        System.out.println("5.5");
 	        EmployeeDAO employeeDAO=new EmployeeDAO();
+	        System.out.println("5");
 
-	       int status=employeeDAO.updateEmployee(employee, id);
+	       int status=employeeDAO.updateEmployee(employee, id, type);
+	       System.out.println("6");
 	      // int id=employeeDAO.getCurrentEmployeeId(name);
 	       
 	       DepartmentDAO departmentDAO = new DepartmentDAO();
+	       System.out.println("9");
 	       departmentDAO.updateEmployeeDepartmentDetail(departmentId,id);
+	       System.out.println("10");
 	       
 	       
 	       //response.setContentType("application/json");

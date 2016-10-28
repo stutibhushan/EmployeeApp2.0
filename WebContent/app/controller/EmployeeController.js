@@ -13,7 +13,7 @@ Ext.define('EmployeeApp.controller.EmployeeController',{
 	},
 	
 	addEmployee: function(){
-		console.log("employee id value"+Ext.getCmp('employeeId').getValue());   
+	  console.log("employee id value"+Ext.getCmp('employeeId').getValue());   
        var name= Ext.getCmp('name').getValue();
        var startDate= Ext.getCmp('startDate').getValue();
        var endDate= Ext.getCmp('endDate').getValue();
@@ -94,7 +94,7 @@ Ext.define('EmployeeApp.controller.EmployeeController',{
    },
    updateEmployee: function()
    {   
-	   var id= Ext.getCmp("employeeId").getValue();
+	  /* var id= Ext.getCmp("employeeId").getValue();
 	   var name= Ext.getCmp('name').getValue();
        var startDate= Ext.getCmp('startDate').getValue();
        var endDate= Ext.getCmp('endDate').getValue();
@@ -116,7 +116,18 @@ Ext.define('EmployeeApp.controller.EmployeeController',{
     		   }
     	   
     	   var type=Ext.getCmp('employeeTypeId').getValue();
-       
+           if(type==="PERMANENT")
+        	   {
+        	   type=1;
+        	   }
+            if(type==="CONTRACT")
+    	     {
+    	      type=2;
+    	      }
+             if(type==="INTERN")
+    	     {
+    	     type=3;
+    	     }
        console.log(departmentList);
       
        	Ext.Ajax.request({
@@ -138,10 +149,10 @@ Ext.define('EmployeeApp.controller.EmployeeController',{
        			departmentList:departmentList,
        			type:type
        			
-       			/*callback : function(options, success, response){ 
+       			callback : function(options, success, response){ 
        				console.log('alert');
        				addEmployeeResponseJson = Ext.JSON.decode(response.responseText);
-       				console.log(addEmployeeResponseJson);*/
+       				console.log(addEmployeeResponseJson);
               
        		},
         success: function(response) {
@@ -168,10 +179,137 @@ Ext.define('EmployeeApp.controller.EmployeeController',{
     	    
   	  }     
      		
-     	});
+     	});*/
+	   var employee={};
+	   employee.id=Ext.getCmp("employeeId").getValue();
+	   employee.name=Ext.getCmp("name").getValue();
+	   employee.startDate=Ext.getCmp("startDate").getValue();
+	   employee.endDate=Ext.getCmp("endDate").getValue();
+	   employee.description=Ext.getCmp("description").getValue();
+	   employee.salary=Ext.getCmp("salary").getValue();
+	   employee.address=Ext.getCmp("address").getValue();
+	   employee.city=Ext.getCmp("city").getValue();
+	   employee.state=Ext.getCmp("state").getValue();
+	   employee.country=Ext.getCmp("country").getValue();
+	   employee.departmentList=Ext.getCmp('itemselector-field').getValue();
+	   employee.type=Ext.getCmp('employeeTypeId').getValue();
+                 if(employee.type==="PERMANENT")
+	               {
+	                employee.type=1;
+	               }
+                  if(type==="CONTRACT")
+                    {
+                     employee.type=2;
+                     }
+                  if(type==="INTERN")
+                    {
+                     employee.type=3;
+                    }
+             
+               employee.startDate = employee.startDate.getDate()+"-"+(employee.startDate.getMonth()+1)+"-"+employee.startDate.getFullYear();
+               console.log("start date---->>>>"+ employee.startDate);
+               employee.endDate = employee.endDate.getDate()+"-"+(employee.endDate.getMonth()+1)+"-"+employee.endDate.getFullYear(); 
+                var employeeJson=JSON.stringify(employee);
+                console.log(employeeJson);
+                Ext.Ajax.request({
+                	  url : 'http://localhost:8080/EmployeeApp2/UpdateEmployee2',
+                	  method: 'post',
+                	  headers: { 'Content-Type': 'application/json' , 'employeeJson': employeeJson},  
+                	  
+                	  success: function(response) {
+                      	
+                  	    // resp is the XmlHttpRequest object
+                  	    var options = Ext.decode(response.responseText);
+                  	    //console.log(options["success"]);
+                  	    //console.log(globalProperties.saveEmployeeMessage);
+                  	    if(options.success==="true")
+                  	    {
+                  	    	Ext.Msg.alert('Notification',options.message);
+                  	    	Ext.getCmp('addEmployeeFormPanel').setActiveTab(0);
+                  	    	
+                  	    	
+                  	    	
+                  	    	
+                  	    	 //Ext.getCmp('addEmployeeFormParentPanel').hide();
+                  	    	//Ext.getCmp('displayViewGridPanel').show();
+                  	    }
+                  	    else
+                  	    	{
+                  	    	Ext.Msg.alert("unable to add");
+                  	    	}
+                  	    
+                	  }     
+                	 
+                	
+                });
+                  
      	
-     	
-     
-     
- }
+    },
+    
+    deleteEmployee:function(grid, rowIndex){
+    	
+    	
+    	Ext.Msg.confirm('Confirm','Do you wanna delete the Employee',function(btnText){
+	        if(btnText === "no"){
+	        	
+	       	    //Ext.getCmp('display-view').getStore().load();
+	        }
+	        else if(btnText === "yes"){
+	        	var employeeVO= Ext.getCmp('display-view').getStore().getAt(rowIndex);
+	        	var employeeId=employeeVO.get('id');
+	           	Ext.Ajax.request({
+	           		url:'http://localhost:8080/EmployeeApp2/DeleteEmployee',
+	           		method:'get',
+	           		params:{
+	           			employeeId: employeeId
+	           		},
+	           		success:function(response)
+	           		{
+	           			
+	           			var options= Ext.decode(response.responseText);
+	           			if(options.success==="true")
+	           				{
+	           				Ext.Msg.alert('Notification',options.message);
+	           			    Ext.getCmp('display-view').getStore().load();
+	           				}
+	           			else
+	           				{
+	           				Ext.Msg.alert('Notification',options.message);
+	           			 Ext.getCmp('display-view').getStore().load();
+	           				}
+	           		}
+	           	});
+	           
+	        }
+	    }, this);
+    		   
+           	/*var employeeVO= Ext.getCmp('display-view').getStore().getAt(rowIndex);
+           	var employeeId=employeeVO.get('id');
+           	Ext.Ajax.request({
+           		url:'http://localhost:8080/EmployeeApp2/DeleteEmployee',
+           		method:'get',
+           		params:{
+           			employeeId: employeeId
+           		},
+           		success:function(response)
+           		{
+           			var options= Ext.decode(response.responseText);
+           			if(options.success==="true")
+           				{
+           				Ext.Msg.alert('Notification',options.message);
+           			    Ext.getCmp('display-view').getStore().load();
+           				}
+           			else
+           				{
+           				Ext.Msg.alert('Notification',options.message);
+           			 Ext.getCmp('display-view').getStore().load();
+           				}
+           		}
+           	});*/
+           	
+       	   // Ext.getCmp('display-view').getStore().load();
+           
+       }
+    
+   
 });

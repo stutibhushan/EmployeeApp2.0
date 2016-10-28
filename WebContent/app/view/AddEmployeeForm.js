@@ -107,7 +107,7 @@ Ext.define('EmployeeApp.view.AddEmployeeForm', {
         name: 'duration',
         id:'duration',
         padding:20,
-       minValue:0,
+        minValue:0,
         listeners   : {
         	spinup: function(field, e, eOpts) {
                 

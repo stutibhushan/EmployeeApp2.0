@@ -3,8 +3,11 @@ Ext.define('EmployeeApp.model.EmployeeVOModel', {
 	
 
 	 fields: [
-	            'name','address','city','state','country','salary','startDate','endDate','type',
+	            'name','address','city','state','country','salary','description', 'profileCompleteness','type',
 	            {name: 'id', type: 'int'},
+	            {name: 'startDate', type:'date'},
+	            {name:'endDate', type:'date'},
+	            
 	            
 	        ],
 	        idProperty: 'id'

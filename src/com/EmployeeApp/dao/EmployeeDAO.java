@@ -84,17 +84,18 @@ public class EmployeeDAO {
 		
 		boolean isFound=false;
 		
+		
 		try{
 			
 			PreparedStatement ps;
 			if(employeeTypeId==4)
 			{
-				ps=connection.prepareStatement("select employee.id as id, name , start_date as startDate, end_Date as endDate, type_name as type, salary, address, city, state, country from employee,employee_type,employee_type_detail where employee.id=employee_type_detail.employee_id and employee_type.id=employee_type_detail.type_id limit ?,?");
+				ps=connection.prepareStatement("select employee.id as id, name , description, start_date as startDate, end_Date as endDate, type_name as type, salary, address, city, state, country from employee,employee_type,employee_type_detail where employee.id=employee_type_detail.employee_id and employee_type.id=employee_type_detail.type_id limit ?,?");
 				ps.setInt(1, start);
 				ps.setInt(2, limit);
 			}
 			else{
-		ps=connection.prepareStatement("select employee.id as id, name , start_date as startDate, end_Date as endDate, type_name as type, salary, address, city, state, country from employee,employee_type,employee_type_detail where employee.id=employee_type_detail.employee_id and employee_type.id=employee_type_detail.type_id and  employee_type.id=? limit ?,?");
+		ps=connection.prepareStatement("select employee.id as id, name , description, start_date as startDate, end_Date as endDate, type_name as type, salary, address, city, state, country from employee,employee_type,employee_type_detail where employee.id=employee_type_detail.employee_id and employee_type.id=employee_type_detail.type_id and  employee_type.id=? limit ?,?");
 		ps.setInt(1, employeeTypeId);
 		ps.setInt(2,start);
 		ps.setInt(3, limit);
@@ -104,21 +105,70 @@ public class EmployeeDAO {
 			ResultSet rs=ps.executeQuery();
 			
 			while(rs.next())
-			{
+			{   
+				int count=10;
 				isFound=false;
 				EmployeeVO employeeVO=new EmployeeVO();
 				employeeVO.setId(rs.getInt("id"));
 				employeeVO.setName(rs.getString("name"));
+				employeeVO.setDescription(rs.getString("description"));
 				employeeVO.setStartDate(rs.getDate("startDate"));
 				employeeVO.setEndDate(rs.getDate("endDate"));
 				employeeVO.setType(rs.getString("type"));
 				employeeVO.setSalary(rs.getDouble("salary"));
 				employeeVO.setAddress(rs.getString("address"));
 				employeeVO.setCity(rs.getString("city"));
+				
 				employeeVO.setState(rs.getString("state"));
 				employeeVO.setCountry(rs.getString("country"));
 				
+				if(employeeVO.getName().equals(""))
+				{
+					count--;
+				}
+				if(employeeVO.getDescription().equals(""))
+				{
+					count--;
+				}
+				if(employeeVO.getAddress().equals(""))
+				{
+					count--;
+				}
+				if(employeeVO.getCity().equals(""))
+				{
+					count--;
+				}
+				if(employeeVO.getState().equals(""))
+				{
+					count--;
+				}
+				if(employeeVO.getCountry().equals(""))
+				{
+					count--;
+				}
+				if(employeeVO.getSalary()==0)
+				{
+					count--;
+				}
+				if(employeeVO.getStartDate().equals(""))
+				{
+					count--;
+				}
+				if(employeeVO.getEndDate().equals(""))
+				{
+					count--;
+				}
+				if(employeeVO.getType().equals(""))
+				{
+					count--;
+				}
+				
+				System.out.println("count"+employeeVO.getId()+" "+count);
+				double profileCompleteness= (count/10.00)*100;
+				System.out.println("profile Completeness"+ profileCompleteness);
+				employeeVO.setProfileCompleteness(profileCompleteness);
 				employees.add(employeeVO);
+				System.out.println("count"+employeeVO.getId()+" "+count);
 				
 				/*if(employees.size()!=0)
 				{
@@ -159,6 +209,7 @@ public class EmployeeDAO {
 		return employees;
 		
 	}
+	
 	
 	
 	public int getEmployeeCount(int employeeTypeId)
@@ -251,7 +302,7 @@ public class EmployeeDAO {
 		}
 	}
  
-    public int updateEmployee(Employee employee, int id)
+    public int updateEmployee(Employee employee, int id, int type)
    { 
     	int status=0;
 	 try
@@ -268,6 +319,15 @@ public class EmployeeDAO {
 			ps.setString(9,employee.getCountry());
 			ps.setInt(10, id);
 		  status=ps.executeUpdate();
+		  
+		  if(type!=-1)
+		  {
+			  ps=connection.prepareStatement("update employee_type_detail set type_id=? where employee_id=?");
+			  ps.setInt(1, type);
+			  ps.setInt(2, id);
+			  ps.executeUpdate();
+		  }
+		  
 	 }
 	 catch(Exception e)
 	 {
@@ -275,5 +335,58 @@ public class EmployeeDAO {
 	 }
 	 return status;
     }
+    
+    public int deleteEmployee(int employeeId)
+    {
+    	int status=0;
+    	try
+    	{
+    		PreparedStatement ps= connection.prepareStatement("delete from employee_type_detail where employee_id=?");
+    		ps.setInt(1, employeeId);
+    		ps.executeUpdate();
+    		ps=connection.prepareStatement("delete from employee_department_detail where employee_id=?");
+    		ps.setInt(1, employeeId);
+    		ps.executeUpdate();
+    		ps=connection.prepareStatement("delete from employee where id=?");
+    		ps.setInt(1,  employeeId);
+    		status= ps.executeUpdate();
+    		
+    	}
+    	catch(Exception e)
+    	{
+    		System.out.println("unable to delete employee"+e.getMessage());
+    	}
+    	return status;
+    }
+    
+    public int bulkDeleteEmployee(ArrayList<Integer> employeeIds)
+    {  
+    	int status=0;
+    	for(int i=0; i<employeeIds.size();i++)
+    	{
+    	try
+    	{
+
+    		PreparedStatement ps= connection.prepareStatement("delete from employee_type_detail where employee_id=?");
+    		ps.setInt(1, employeeIds.get(i));
+    		ps.executeUpdate();
+    		ps=connection.prepareStatement("delete from employee_department_detail where employee_id=?");
+    		ps.setInt(1, employeeIds.get(i));
+    		ps.executeUpdate();
+    		ps=connection.prepareStatement("delete from employee where id=?");
+    		ps.setInt(1,  employeeIds.get(i));
+    		status= ps.executeUpdate();
+    		
+    	}
+    	catch(Exception e)
+    	{
+    		
+    	}
+    	}
+    	return status;
+    }
+
+
+	
 	
 }

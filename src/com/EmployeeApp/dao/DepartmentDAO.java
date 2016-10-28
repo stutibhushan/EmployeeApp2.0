@@ -55,7 +55,26 @@ public class DepartmentDAO {
 	{  
 		
 	  int status=-1;
-		for(int i=0; i< departmentId.size(); i++)
+	  
+	  try
+	  {
+		  PreparedStatement ps= connection.prepareStatement("delete from employee_department_detail where employee_id=?");
+		  ps.setInt(1, id);
+		  ps.executeUpdate();
+		  for(int i=0; i<departmentId.size();i++)
+		  {
+			  ps=connection.prepareStatement("insert into employee_department_detail(employee_id,department_id) values(?,?)");
+			  ps.setInt(1, id);
+			  ps.setInt(2, departmentId.get(i));
+			  ps.executeUpdate();
+		  }
+	  }
+	  catch(Exception e)
+	  {
+		  
+	  }
+	 
+		/*for(int i=0; i< departmentId.size(); i++)
 		{
 			
 		
@@ -76,8 +95,8 @@ public class DepartmentDAO {
 			e.printStackTrace();
 			
 		}
+		*/
 		
-		}
 		
 		
 	}
